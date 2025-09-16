@@ -1,258 +1,631 @@
 "use client";
+import { useState, useEffect } from "react";
+import {
+  BookOpen,
+  Brain,
+  Trophy,
+  Clock,
+  Users,
+  Star,
+  Play,
+  ChevronRight,
+  Sparkles,
+  Target,
+  Zap,
+  Award,
+  TrendingUp,
+  User,
+  Calendar,
+  Filter,
+  Search,
+  Gamepad2,
+  Puzzle,
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/Navbar";
-import { Info, Users, Target, Award, Zap, Shield } from "lucide-react";
 
-const AboutPage = () => {
-  const stats = [
-    { label: "Active Users", value: "10K+", icon: Users },
-    { label: "Projects Completed", value: "500+", icon: Target },
-    { label: "Success Rate", value: "99.9%", icon: Award },
-    { label: "Uptime", value: "99.99%", icon: Zap },
+export default function ActivityPage() {
+  const [scrollY, setScrollY] = useState(0);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedLevel, setSelectedLevel] = useState("all");
+
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    const handleMouseMove = (e) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, []);
+
+  const categories = [
+    { id: "all", label: "All Activities", icon: Sparkles },
+    { id: "math", label: "Mathematics", icon: Target },
+    { id: "science", label: "Science", icon: Brain },
+    { id: "language", label: "Language Arts", icon: BookOpen },
+    { id: "history", label: "History", icon: Award },
+    { id: "coding", label: "Programming", icon: Zap },
   ];
 
-  const features = [
+  const levels = [
+    { id: "all", label: "All Levels" },
+    { id: "elementary", label: "Elementary" },
+    { id: "middle", label: "Middle School" },
+    { id: "high", label: "High School" },
+    { id: "college", label: "College" },
+  ];
+
+  const featuredActivities = [
     {
-      icon: Shield,
-      title: "Enterprise Security",
+      id: 1,
+      title: "Quantum Physics Quiz",
       description:
-        "Bank-level security with end-to-end encryption and compliance certifications.",
+        "Test your understanding of quantum mechanics and particle physics",
+      category: "science",
+      level: "college",
+      duration: "15 min",
+      participants: 2847,
+      difficulty: "Advanced",
+      rating: 4.8,
+      icon: Brain,
+      gradient: "from-purple-500 to-violet-600",
+      type: "quiz",
     },
     {
-      icon: Zap,
-      title: "Lightning Fast",
+      id: 2,
+      title: "Algebra Challenge",
       description:
-        "Optimized performance with sub-second response times and global CDN.",
-    },
-    {
-      icon: Users,
-      title: "Team Collaboration",
-      description:
-        "Seamless collaboration tools designed for modern distributed teams.",
-    },
-    {
+        "Master algebraic equations through interactive problem solving",
+      category: "math",
+      level: "high",
+      duration: "20 min",
+      participants: 5234,
+      difficulty: "Intermediate",
+      rating: 4.6,
       icon: Target,
-      title: "Goal-Oriented",
-      description:
-        "Purpose-built to help you achieve your objectives efficiently and effectively.",
+      gradient: "from-blue-500 to-cyan-600",
+      type: "game",
+    },
+    {
+      id: 3,
+      title: "World History Timeline",
+      description: "Navigate through major historical events and civilizations",
+      category: "history",
+      level: "middle",
+      duration: "25 min",
+      participants: 3692,
+      difficulty: "Beginner",
+      rating: 4.7,
+      icon: Award,
+      gradient: "from-amber-500 to-orange-600",
+      type: "game",
     },
   ];
 
-  const team = [
+  const allActivities = [
     {
-      name: "Alex Thompson",
-      role: "Founder & CEO",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-      bio: "15+ years building scalable platforms",
+      id: 4,
+      title: "Python Fundamentals",
+      description:
+        "Learn basic programming concepts through interactive coding challenges",
+      category: "coding",
+      level: "high",
+      duration: "30 min",
+      participants: 1892,
+      difficulty: "Beginner",
+      rating: 4.9,
+      icon: Zap,
+      gradient: "from-emerald-500 to-teal-600",
+      type: "quiz",
     },
     {
-      name: "Sarah Chen",
-      role: "CTO",
-      image:
-        "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
-      bio: "Former Google engineer, AI specialist",
+      id: 5,
+      title: "Shakespeare Explorer",
+      description:
+        "Dive into the works of William Shakespeare with interactive analysis",
+      category: "language",
+      level: "high",
+      duration: "18 min",
+      participants: 2156,
+      difficulty: "Intermediate",
+      rating: 4.5,
+      icon: BookOpen,
+      gradient: "from-rose-500 to-pink-600",
+      type: "game",
     },
     {
-      name: "Marcus Johnson",
-      role: "Head of Design",
-      image:
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
-      bio: "Award-winning UX designer",
+      id: 6,
+      title: "Chemistry Lab Simulator",
+      description:
+        "Conduct virtual chemistry experiments safely and effectively",
+      category: "science",
+      level: "college",
+      duration: "35 min",
+      participants: 1743,
+      difficulty: "Advanced",
+      rating: 4.8,
+      icon: Brain,
+      gradient: "from-indigo-500 to-purple-600",
+      type: "game",
+    },
+    {
+      id: 7,
+      title: "Geometry Puzzle Master",
+      description:
+        "Solve complex geometric puzzles and spatial reasoning challenges",
+      category: "math",
+      level: "middle",
+      duration: "12 min",
+      participants: 4567,
+      difficulty: "Intermediate",
+      rating: 4.4,
+      icon: Target,
+      gradient: "from-cyan-500 to-blue-600",
+      type: "quiz",
+    },
+    {
+      id: 8,
+      title: "Ancient Civilizations",
+      description:
+        "Explore the rise and fall of ancient empires through interactive storytelling",
+      category: "history",
+      level: "elementary",
+      duration: "22 min",
+      participants: 3821,
+      difficulty: "Beginner",
+      rating: 4.6,
+      icon: Award,
+      gradient: "from-yellow-500 to-amber-600",
+      type: "game",
     },
   ];
+
+  const particles = [
+    { id: 1, left: 15, top: 20, delay: 0, duration: 12 },
+    { id: 2, left: 85, top: 80, delay: 3, duration: 15 },
+    { id: 3, left: 70, top: 15, delay: 6, duration: 18 },
+    { id: 4, left: 25, top: 75, delay: 9, duration: 14 },
+    { id: 5, left: 90, top: 40, delay: 12, duration: 16 },
+  ];
+
+  const filteredActivities = allActivities.filter((activity) => {
+    const categoryMatch =
+      selectedCategory === "all" || activity.category === selectedCategory;
+    const levelMatch =
+      selectedLevel === "all" || activity.level === selectedLevel;
+    return categoryMatch && levelMatch;
+  });
+
+  const getDifficultyColor = (difficulty) => {
+    switch (difficulty) {
+      case "Beginner":
+        return "text-green-400";
+      case "Intermediate":
+        return "text-yellow-400";
+      case "Advanced":
+        return "text-red-400";
+      default:
+        return "text-gray-400";
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-slate-900">
-      <Navbar />
+    <>
+      {/* Background with stable elements */}
+        <Navbar/>
+      <div className="fixed inset-0 -z-10">
+        <div className="absolute inset-0 bg-slate-900" />
 
-      {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(120,119,198,0.3),transparent_50%)]" />
-        <div className="relative max-w-7xl mx-auto px-6 py-24">
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-3xl mb-8 backdrop-blur-sm border border-white/10">
-              <Info className="w-10 h-10 text-blue-400" />
-            </div>
-            <h1 className="text-6xl font-bold bg-gradient-to-r from-white via-slate-200 to-slate-300 bg-clip-text text-transparent mb-6">
-              About Our Platform
-            </h1>
-            <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
-              We're revolutionizing how teams collaborate and manage their
-              workflows. Built by developers, for developers, with
-              enterprise-grade reliability.
-            </p>
-          </div>
+        {/* Slower, more subtle gradient orbs */}
+        <div
+          className="absolute w-96 h-96 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-full blur-3xl"
+          style={{
+            left: mousePosition.x - 192,
+            top: mousePosition.y - 192,
+            transition: "all 1.2s ease-out",
+          }}
+        />
+
+        {/* Reduced and slower floating particles */}
+        <div className="absolute inset-0 overflow-hidden">
+          {particles.map((particle) => (
+            <div
+              key={particle.id}
+              className="absolute w-1 h-1 bg-accent/20 rounded-full animate-float"
+              style={{
+                left: `${particle.left}%`,
+                top: `${particle.top}%`,
+                animationDelay: `${particle.delay}s`,
+                animationDuration: `${particle.duration}s`,
+              }}
+            />
+          ))}
         </div>
       </div>
 
-      {/* Stats Section */}
-      <div className="py-16 bg-slate-800/50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {stats.map((stat, index) => {
-              const IconComponent = stat.icon;
-              return (
-                <div key={index} className="text-center group">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300 backdrop-blur-sm border border-white/10">
-                    <IconComponent className="w-8 h-8 text-blue-400" />
-                  </div>
-                  <div className="text-4xl font-bold text-white mb-2">
-                    {stat.value}
-                  </div>
-                  <div className="text-slate-400">{stat.label}</div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
+      <div className="min-h-screen relative z-10 pt-20">
+        {/* Hero Section */}
+        <section className="pt-16 pb-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full border border-purple-500/30 backdrop-blur-sm mb-6">
+                <Gamepad2 className="w-5 h-5 text-purple-400 mr-2" />
+                <span className="text-purple-300 font-medium">
+                  Interactive Learning
+                </span>
+              </div>
 
-      {/* Mission Section */}
-      <div className="py-20 bg-gradient-to-r from-slate-900 to-slate-800">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <h2 className="text-4xl font-bold text-white mb-6">
-                Our Mission
-              </h2>
-              <p className="text-lg text-slate-300 mb-6 leading-relaxed">
-                We believe that great software should empower teams to do their
-                best work. Our platform eliminates friction, enhances
-                collaboration, and provides the tools necessary for modern teams
-                to thrive in a digital-first world.
+              <h1 className="text-5xl md:text-7xl font-bold mb-6">
+                <span className="text-white">Learn Through </span>
+                <span className="bg-gradient-to-r from-accent via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  Play
+                </span>
+              </h1>
+
+              <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-8">
+                Discover engaging educational games and quizzes designed to make
+                learning
+                <span className="text-accent font-semibold">
+                  {" "}
+                  fun and effective
+                </span>{" "}
+                for students of all levels.
               </p>
-              <p className="text-lg text-slate-300 leading-relaxed">
-                Since our founding, we've been committed to building not just
-                software, but solutions that scale with your ambitions and adapt
-                to your unique workflows.
-              </p>
-            </div>
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-3xl blur-xl" />
-              <div className="relative bg-slate-800/80 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-green-400 rounded-full" />
-                    <span className="text-slate-300">
-                      Innovation-driven development
+
+              {/* Quick Stats */}
+              <div className="flex flex-wrap justify-center gap-6 mb-8">
+                {[
+                  { label: "Active Games", value: "250+", icon: Gamepad2 },
+                  { label: "Students Playing", value: "50K+", icon: Users },
+                  { label: "Avg Rating", value: "4.7", icon: Star },
+                ].map((stat, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center space-x-2 bg-black/30 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20"
+                  >
+                    <stat.icon className="w-5 h-5 text-accent" />
+                    <span className="text-white font-semibold">
+                      {stat.value}
                     </span>
+                    <span className="text-gray-400 text-sm">{stat.label}</span>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-blue-400 rounded-full" />
-                    <span className="text-slate-300">
-                      User-centric design philosophy
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-purple-400 rounded-full" />
-                    <span className="text-slate-300">
-                      Enterprise-grade security
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-orange-400 rounded-full" />
-                    <span className="text-slate-300">24/7 global support</span>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </section>
 
-      {/* Features Section */}
-      <div className="py-20 bg-slate-900">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-6">
-              Why Choose Us
-            </h2>
-            <p className="text-xl text-slate-400 max-w-3xl mx-auto">
-              Built on cutting-edge technology with a focus on performance,
-              security, and user experience.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => {
-              const IconComponent = feature.icon;
-              return (
-                <div key={index} className="group">
-                  <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 h-full border border-white/5 hover:border-white/20 transition-all duration-300 hover:transform hover:scale-105">
-                    <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-xl mb-6 group-hover:scale-110 transition-transform duration-300">
-                      <IconComponent className="w-7 h-7 text-blue-400" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-white mb-4">
-                      {feature.title}
-                    </h3>
-                    <p className="text-slate-400 leading-relaxed">
-                      {feature.description}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* Team Section */}
-      <div className="py-20 bg-slate-800/30">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-6">
-              Meet Our Team
-            </h2>
-            <p className="text-xl text-slate-400">
-              Passionate individuals building the future of team collaboration.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-12">
-            {team.map((member, index) => (
-              <div key={index} className="text-center group">
-                <div className="relative mb-6 inline-block">
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-lg group-hover:blur-xl transition-all duration-300" />
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="relative w-32 h-32 rounded-full mx-auto object-cover border-4 border-white/10 group-hover:border-white/20 transition-all duration-300"
+        {/* Filters Section */}
+        <section className="px-4 sm:px-6 lg:px-8 mb-12">
+          <div className="max-w-7xl mx-auto">
+            <div className="bg-black/40 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
+              <div className="flex flex-wrap gap-4 items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold text-white flex items-center">
+                  <Filter className="w-5 h-5 mr-2 text-accent" />
+                  Filter Activities
+                </h3>
+                <div className="flex items-center space-x-2 bg-black/30 rounded-full px-4 py-2 border border-white/10">
+                  <Search className="w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search activities..."
+                    className="bg-transparent text-white placeholder-gray-400 outline-none"
                   />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">
-                  {member.name}
-                </h3>
-                <p className="text-blue-400 mb-3 font-medium">{member.role}</p>
-                <p className="text-slate-400">{member.bio}</p>
               </div>
-            ))}
+
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Category Filter */}
+                <div>
+                  <label className="text-sm font-medium text-gray-300 mb-3 block">
+                    Subject Category
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {categories.map((category) => (
+                      <button
+                        key={category.id}
+                        onClick={() => setSelectedCategory(category.id)}
+                        className={`flex items-center px-4 py-2 rounded-full transition-all duration-300 ${
+                          selectedCategory === category.id
+                            ? "bg-gradient-to-r from-accent to-purple-500 text-white"
+                            : "bg-black/30 text-gray-300 hover:bg-black/50 hover:text-white border border-white/10"
+                        }`}
+                      >
+                        <category.icon className="w-4 h-4 mr-2" />
+                        {category.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Level Filter */}
+                <div>
+                  <label className="text-sm font-medium text-gray-300 mb-3 block">
+                    Education Level
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {levels.map((level) => (
+                      <button
+                        key={level.id}
+                        onClick={() => setSelectedLevel(level.id)}
+                        className={`px-4 py-2 rounded-full transition-all duration-300 ${
+                          selectedLevel === level.id
+                            ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white"
+                            : "bg-black/30 text-gray-300 hover:bg-black/50 hover:text-white border border-white/10"
+                        }`}
+                      >
+                        {level.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
+
+        {/* Featured Activities */}
+        <section className="px-4 sm:px-6 lg:px-8 mb-16">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                  Featured Activities
+                </h2>
+                <p className="text-gray-400">
+                  Trending games and quizzes this week
+                </p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <TrendingUp className="w-5 h-5 text-accent" />
+                <span className="text-accent font-medium">Most Popular</span>
+              </div>
+            </div>
+
+            <div className="grid lg:grid-cols-3 gap-8">
+              {featuredActivities.map((activity) => (
+                <Card
+                  key={activity.id}
+                  className="group bg-black/40 backdrop-blur-xl border-white/10 hover:border-accent/50 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl hover:shadow-accent/25 overflow-hidden"
+                >
+                  <div
+                    className={`h-2 bg-gradient-to-r ${activity.gradient}`}
+                  />
+
+                  <CardHeader className="pb-4">
+                    <div className="flex items-start justify-between mb-4">
+                      <div
+                        className={`p-3 bg-gradient-to-br ${activity.gradient} rounded-xl`}
+                      >
+                        <activity.icon className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                        <span className="text-white font-medium">
+                          {activity.rating}
+                        </span>
+                      </div>
+                    </div>
+
+                    <CardTitle className="text-white text-xl group-hover:text-accent transition-colors duration-300">
+                      {activity.title}
+                    </CardTitle>
+                    <p className="text-gray-400 text-sm">
+                      {activity.description}
+                    </p>
+                  </CardHeader>
+
+                  <CardContent className="pt-0">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center space-x-4 text-sm">
+                        <div className="flex items-center text-gray-400">
+                          <Clock className="w-4 h-4 mr-1" />
+                          {activity.duration}
+                        </div>
+                        <div className="flex items-center text-gray-400">
+                          <Users className="w-4 h-4 mr-1" />
+                          {activity.participants.toLocaleString()}
+                        </div>
+                      </div>
+                      <span
+                        className={`text-sm font-medium ${getDifficultyColor(
+                          activity.difficulty
+                        )}`}
+                      >
+                        {activity.difficulty}
+                      </span>
+                    </div>
+
+                    <Button
+                      className={`w-full bg-gradient-to-r ${activity.gradient} hover:shadow-lg hover:shadow-accent/25 transition-all duration-300 group-hover:scale-[1.02]`}
+                    >
+                      <Play className="w-4 h-4 mr-2" />
+                      Start {activity.type === "quiz" ? "Quiz" : "Game"}
+                      <ChevronRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* All Activities Grid */}
+        <section className="px-4 sm:px-6 lg:px-8 mb-16">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                  All Activities
+                </h2>
+                <p className="text-gray-400">
+                  {filteredActivities.length} activities found
+                  {selectedCategory !== "all" &&
+                    ` in ${
+                      categories.find((c) => c.id === selectedCategory)?.label
+                    }`}
+                  {selectedLevel !== "all" &&
+                    ` for ${levels.find((l) => l.id === selectedLevel)?.label}`}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {filteredActivities.map((activity) => (
+                <Card
+                  key={activity.id}
+                  className="group bg-black/40 border-white/10 hover:border-accent/30 transition-all duration-300 hover:scale-[1.01]"
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between mb-3">
+                      <div
+                        className={`p-2 bg-gradient-to-br ${activity.gradient} rounded-lg`}
+                      >
+                        <activity.icon className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-1">
+                          <Star className="w-3 h-3 text-yellow-400 fill-current" />
+                          <span className="text-white text-sm">
+                            {activity.rating}
+                          </span>
+                        </div>
+                        <span
+                          className={`text-xs px-2 py-1 rounded-full ${
+                            activity.type === "quiz"
+                              ? "bg-blue-500/20 text-blue-300"
+                              : "bg-green-500/20 text-green-300"
+                          }`}
+                        >
+                          {activity.type}
+                        </span>
+                      </div>
+                    </div>
+
+                    <CardTitle className="text-white text-lg group-hover:text-accent transition-colors duration-300">
+                      {activity.title}
+                    </CardTitle>
+                    <p className="text-gray-400 text-sm line-clamp-2">
+                      {activity.description}
+                    </p>
+                  </CardHeader>
+
+                  <CardContent className="pt-0">
+                    <div className="flex items-center justify-between mb-3 text-xs text-gray-400">
+                      <div className="flex items-center space-x-3">
+                        <div className="flex items-center">
+                          <Clock className="w-3 h-3 mr-1" />
+                          {activity.duration}
+                        </div>
+                        <div className="flex items-center">
+                          <Users className="w-3 h-3 mr-1" />
+                          {activity.participants.toLocaleString()}
+                        </div>
+                      </div>
+                      <span
+                        className={`font-medium ${getDifficultyColor(
+                          activity.difficulty
+                        )}`}
+                      >
+                        {activity.difficulty}
+                      </span>
+                    </div>
+
+                    <Button
+                      size="sm"
+                      className={`w-full bg-gradient-to-r ${activity.gradient} hover:shadow-md transition-all duration-300`}
+                    >
+                      <Play className="w-3 h-3 mr-2" />
+                      Play Now
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {filteredActivities.length === 0 && (
+              <div className="text-center py-16">
+                <Puzzle className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  No Activities Found
+                </h3>
+                <p className="text-gray-400 mb-6">
+                  Try adjusting your filters to see more activities.
+                </p>
+                <Button
+                  onClick={() => {
+                    setSelectedCategory("all");
+                    setSelectedLevel("all");
+                  }}
+                  className="bg-gradient-to-r from-accent to-purple-500"
+                >
+                  Reset Filters
+                </Button>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="px-4 sm:px-6 lg:px-8 pb-20">
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-gradient-to-br from-black/50 to-purple-900/30 rounded-3xl p-12 border border-accent/30 backdrop-blur-xl hover:border-accent/50 transition-all duration-700">
+              <Trophy className="w-16 h-16 text-accent mx-auto mb-6" />
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                Ready to Level Up Your Learning?
+              </h2>
+              <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+                Join thousands of students who are making learning fun and
+                engaging through our interactive platform.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button className="bg-gradient-to-r from-accent to-purple-500 hover:shadow-xl hover:shadow-accent/25 transition-all duration-300 hover:scale-105">
+                  <Sparkles className="w-5 h-5 mr-2" />
+                  Start Playing Now
+                </Button>
+                <Button
+                  variant="outline"
+                  className="border-white/20 text-white bg-black/30"
+                >
+                  View Leaderboards
+                  <ChevronRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
 
-      {/* CTA Section */}
-      <div className="py-20 bg-gradient-to-r from-blue-600/10 to-purple-600/10">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">
-            Ready to Get Started?
-          </h2>
-          <p className="text-xl text-slate-300 mb-8">
-            Join thousands of teams already using our platform to streamline
-            their workflows.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-300 hover:transform hover:scale-105 shadow-lg shadow-blue-600/25">
-              Start Free Trial
-            </button>
-            <button className="px-8 py-4 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-700 transition-all duration-300 border border-white/10 hover:border-white/20">
-              Contact Sales
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+      <style jsx>{`
+        @keyframes float {
+          0%,
+          100% {
+            transform: translateY(0px) rotate(0deg);
+            opacity: 0.4;
+          }
+          50% {
+            transform: translateY(-20px) rotate(180deg);
+            opacity: 0.8;
+          }
+        }
+        .animate-float {
+          animation: float ease-in-out infinite;
+        }
+        .line-clamp-2 {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+      `}</style>
+    </>
   );
-};
-
-export default AboutPage;
+}
