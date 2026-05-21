@@ -23,6 +23,11 @@ export async function GET(request) {
     const collection = db.collection("exceptions");
     const query = { status: "pending" };
 
+    const { searchParams } = new URL(request.url);
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "20", 10)));
+    const skip = (page - 1) * limit;
+
     // Fetch total document count under query
     const total = await collection.countDocuments(query);
 
@@ -33,12 +38,16 @@ export async function GET(request) {
         .collection("exceptions")
         .find({ status: "pending" })
         .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
         .toArray();
     } else if (profile.role === "student") {
       exceptions = await db
         .collection("exceptions")
         .find({ status: "pending", studentEmail: decodedToken.email })
         .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
         .toArray();
     } else {
       return jsonError("Forbidden", 403);
