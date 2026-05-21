@@ -20,6 +20,11 @@ export async function GET(request) {
     }
 
     const db = await connectDb();
+    const collection = db.collection("exceptions");
+    const query = { status: "pending" };
+
+    // Fetch total document count under query
+    const total = await collection.countDocuments(query);
 
     let exceptions;
 
@@ -39,7 +44,17 @@ export async function GET(request) {
       return jsonError("Forbidden", 403);
     }
 
-    return jsonSuccess(exceptions, 200);
+    const totalPages = Math.ceil(total / limit);
+
+    return jsonSuccess({
+      exceptions,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages,
+      },
+    }, 200);
   } catch (error) {
     console.error("Exception fetch error:", error);
     return jsonError("Internal server error", 500);
