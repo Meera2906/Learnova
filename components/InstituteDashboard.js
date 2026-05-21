@@ -44,6 +44,7 @@ import {
 import { Navbar } from "./Navbar";
 import dynamic from "next/dynamic";
 import ChartSkeleton from "@/components/ui/ChartSkeleton";
+import DashboardSkeleton from "@/components/ui/DashboardSkeleton";
 
 const AttendanceTrendsChart = dynamic(
   () => import("@/components/charts/AttendanceTrendsChart"),
@@ -51,6 +52,7 @@ const AttendanceTrendsChart = dynamic(
 );
 
 const InstituteDashboard = () => {
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedClass, setSelectedClass] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
@@ -208,10 +210,18 @@ const InstituteDashboard = () => {
   });
 
   useEffect(() => {
+    const loadingTimer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
-    return () => clearInterval(timer);
+
+    return () => {
+      clearInterval(timer);
+      clearTimeout(loadingTimer);
+    };
   }, []);
 
   const formatTime = (date) => {
@@ -1031,6 +1041,10 @@ const InstituteDashboard = () => {
       </div>
     </div>
   );
+
+  if (loading) {
+    return <DashboardSkeleton />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
