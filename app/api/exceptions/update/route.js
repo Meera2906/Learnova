@@ -1,185 +1,116 @@
+import { NextResponse } from "next/server";
 import { connectDb } from "@/lib/mongodb";
+import { getUserProfile } from "@/lib/firebase-admin";
+import { withErrorHandler, authenticateRequest } from "@/lib/error-handler";
+import { AppError, ValidationError, ForbiddenError, NotFoundError } from "@/lib/errors";
 
-import {
-  jsonSuccess,
-  jsonError,
-} from "@/lib/api-response";
-
-import { verifyFirebaseToken } from "@/lib/firebase-admin";
-
-export const rateLimitMap = new Map();
-
-const RATE_LIMIT_WINDOW =
-  60 * 1000;
-
-const MAX_ATTEMPTS = 10;
-
-export async function GET(
-  request
-) {
-  try {
-    // Rate limiting
-    const ip =
-      request.headers.get(
-        "x-real-ip"
-      ) ||
-      request.headers.get(
-        "x-vercel-proxied-for"
-      ) ||
-      request.ip ||
-      request.headers
-        .get(
-          "x-forwarded-for"
-        )
-        ?.split(",")[0]
-        ?.trim() ||
-      "127.0.0.1";
-
-    const now = Date.now();
-
-    if (!rateLimitMap.has(ip)) {
-      rateLimitMap.set(ip, []);
+let ObjectId;
+if (process.env.NODE_ENV === "test") {
+  ObjectId = class FakeObjectId {
+    constructor(id) {
+      this.id = id;
     }
-
-    const attempts =
-      rateLimitMap
-        .get(ip)
-        .filter(
-          (timestamp) =>
-            now - timestamp <
-            RATE_LIMIT_WINDOW
-        );
-
-    attempts.push(now);
-
-    rateLimitMap.set(
-      ip,
-      attempts
-    );
-
-    if (
-      attempts.length >
-      MAX_ATTEMPTS
-    ) {
-      return jsonError(
-        "Too many attempts. Please try again later.",
-        429
-      );
+    static isValid(id) {
+      return typeof id === "string" && /^[0-9a-fA-F]{24}$/.test(id);
     }
-
-    // Authentication
-    const authorization =
-      request.headers.get(
-        "authorization"
-      );
-
-    const token =
-      authorization?.split(
-        " "
-      )[1];
-
-    if (!token) {
-      return jsonError(
-        "Unauthorized: No token provided",
-        401
-      );
-    }
-
-    const authResult =
-      await verifyFirebaseToken(
-        token
-      );
-
-    if (!authResult.valid) {
-      return jsonError(
-        {
-          message:
-            "Unauthorized",
-
-          reason:
-            authResult.reason,
-        },
-        401
-      );
-    }
-
-    // Search query
-    const { searchParams } =
-      new URL(request.url);
-
-    const search =
-      searchParams.get(
-        "search"
-      );
-
-    const query = search
-      ? {
-          $or: [
-            {
-              name: {
-                $regex:
-                  search,
-
-                $options:
-                  "i",
-              },
-            },
-
-            {
-              email: {
-                $regex:
-                  search,
-
-                $options:
-                  "i",
-              },
-            },
-          ],
-        }
-      : {};
-
-    // Database
-    const db =
-      await connectDb();
-
-    const users =
-      db.collection("users");
-
-    const allUsers =
-      await users
-        .find(query, {
-          projection: {
-            _id: 1,
-            name: 1,
-            email: 1,
-            image: 1,
-          },
-        })
-        .limit(50)
-        .toArray();
-
-    const sanitizedUsers =
-      allUsers.map(
-        ({
-          image,
-          ...rest
-        }) => ({
-          ...rest,
-          hasImage:
-            !!image,
-        })
-      );
-
-    return jsonSuccess(
-      sanitizedUsers,
-      200
-    );
-  } catch (err) {
-    console.error(err);
-
-    return jsonError(
-      "Failed to fetch labels",
-      500
-    );
-  }
+  };
+} else {
+  ObjectId = require("mongodb").ObjectId;
 }
+
+export const PUT = withErrorHandler(async (request) => {
+  const decodedToken = await authenticateRequest(request);
+
+  // Fetch user profile from Firestore to get the user's role
+  const profile = await getUserProfile(decodedToken.uid);
+
+  if (!profile) {
+    throw new NotFoundError("User profile not found");
+  }
+
+  // Restrict access to admin and teacher roles only (return 403 Forbidden otherwise)
+  if (profile.role !== "admin" && profile.role !== "teacher") {
+    throw new ForbiddenError("Forbidden");
+  }
+
+  const body = await request.json();
+  const { exceptionId, status, comments } = body;
+
+  if (!exceptionId) {
+    throw new ValidationError("exceptionId is required");
+  }
+
+  if (!ObjectId.isValid(exceptionId)) {
+    throw new ValidationError("Invalid exception ID");
+  }
+
+  const trimmedStatus = typeof status === "string" ? status.trim() : "";
+  const allowedStatuses = ["approved", "rejected"];
+  if (!allowedStatuses.includes(trimmedStatus)) {
+    throw new ValidationError("Invalid status value");
+  }
+
+  const db = await connectDb();
+
+    // Fetch the exception to perform ownership/relationship checks to prevent IDOR
+    const exception = await db.collection("exceptions").findOne({ _id: new ObjectId(exceptionId) });
+
+    if (!exception) {
+      return jsonError("Exception not found", 404);
+    }
+
+    // Perform teacher-specific assignment validation (CWE-639 resolution)
+    if (profile.role === "teacher") {
+      const teacherSubjects = profile.subjects || [];
+      const exceptionClass = exception.className || exception.class;
+      let isAuthorized = false;
+
+      // 1. Check if the teacher teaches the class of the exception
+      if (exceptionClass && teacherSubjects.includes(exceptionClass)) {
+        isAuthorized = true;
+      }
+
+      // 2. Fallback: Check student-teacher subject assignment overlap
+      if (!isAuthorized && exception.studentEmail) {
+        const studentProfile = await getUserProfileByEmail(exception.studentEmail);
+        if (studentProfile) {
+          const studentSubjects = studentProfile.subjects || studentProfile.classes || [];
+          const hasOverlap = studentSubjects.some((subject) => teacherSubjects.includes(subject));
+          if (hasOverlap) {
+            isAuthorized = true;
+          }
+        }
+      }
+
+      if (!isAuthorized) {
+        return jsonError("Forbidden: You are not authorized to update exception requests for this class/student.", 403);
+      }
+    }
+
+     let result;
+  try {
+    result = await db.collection("exceptions").updateOne(
+      { _id: new ObjectId(exceptionId) },
+      {
+        $set: {
+          status: trimmedStatus,
+          comments,
+          reviewedBy: decodedToken.email,
+          reviewedAt: new Date(),
+          updatedAt: new Date(),
+        },
+      },
+    );
+  } catch (error) {
+    console.error("Exception update error:", error);
+    throw new AppError("Internal server error", 500);
+  }
+
+  if (result.matchedCount === 0) {
+    throw new NotFoundError("Exception not found");
+  }
+
+  return NextResponse.json({
+    message: "Exception updated successfully",
+  });
+});
