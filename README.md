@@ -199,11 +199,20 @@ NEXT_PUBLIC_EMAILJS_USER_ID=your_user_id
 
 ### 4. Run the development server
 
+By default, Next.js starts the development server on port 3000. Run the server using:
+
 ```bash
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+> [!NOTE]
+> If you need to run the application on a custom port, use the standard Next.js port configuration:
+> ```bash
+> npm run dev -- -p <port_number>
+> ```
+> Avoid using deprecated environment variables like `PORT` directly in the shell as it is not cross-platform compatible.
 
 ### 5. Build for production
 
