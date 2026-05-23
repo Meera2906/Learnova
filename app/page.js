@@ -156,10 +156,10 @@ const IMPACT_DATA = [
 const SectionBadge = ({
   icon: Icon,
   text,
-  gradient = "from-purple-500/20 to-pink-500/20",
-  borderClass = "border-purple-500/30",
-  iconClass = "text-purple-400",
-  textClass = "text-purple-300",
+  gradient = "from-purple-500/10 to-pink-500/10 dark:from-purple-500/20 dark:to-pink-500/20",
+  borderClass = "border-purple-200/50 dark:border-purple-500/30",
+  iconClass = "text-purple-600 dark:text-purple-400",
+  textClass = "text-purple-700 dark:text-purple-300",
 }) => (
   <div
     className={`inline-flex items-center px-4 py-2 bg-gradient-to-r ${gradient} rounded-full border ${borderClass} backdrop-blur-sm mb-6`}
@@ -191,9 +191,9 @@ const ActionButton = ({
     "group inline-flex items-center px-8 py-4 rounded-full font-semibold transition-all duration-500 hover:scale-[1.02]";
   const variants = {
     primary:
-      "bg-gradient-to-r from-accent to-purple-500 text-black dark:text-white hover:shadow-xl hover:shadow-accent/25",
+      "bg-gradient-to-r from-accent to-purple-500 text-white hover:shadow-xl hover:shadow-accent/25",
     secondary:
-      "bg-white/10 text-black dark:text-white border border-white/20 hover:bg-white/20",
+      "bg-purple-50/50 dark:bg-white/10 text-purple-700 dark:text-white border border-purple-200/60 dark:border-white/20 hover:bg-purple-100/50 dark:hover:bg-white/20",
   };
 
   const contentClasses = `${baseClasses} ${variants[variant]} ${className}`;
@@ -537,11 +537,11 @@ export default function AboutPage() {
             <Reveal className="text-center mb-20">
               <SectionBadge
                 icon={Heart}
-                text={translations[language].values}
-                gradient="from-accent/20 to-purple-500/20"
-                borderClass="border-accent/30"
-                iconClass="text-accent"
-                textClass="text-accent"
+                text="Our Values"
+                gradient="from-accent/10 to-purple-500/10 dark:from-accent/20 dark:to-purple-500/20"
+                borderClass="border-accent/20 dark:border-accent/30"
+                iconClass="text-accent dark:text-purple-400"
+                textClass="text-accent dark:text-purple-300"
               />
 
               <h2 className="text-4xl md:text-5xl font-bold text-black dark:text-white mb-6">
@@ -668,11 +668,11 @@ export default function AboutPage() {
             <Reveal className="text-center mb-20">
               <SectionBadge
                 icon={Users}
-                text={translations[language].team}
-                gradient="from-emerald-500/20 to-teal-500/20"
-                borderClass="border-emerald-500/30"
-                iconClass="text-emerald-400"
-                textClass="text-emerald-400"
+                text="Our Team"
+                gradient="from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20"
+                borderClass="border-emerald-500/20 dark:border-emerald-500/30"
+                iconClass="text-emerald-600 dark:text-emerald-400"
+                textClass="text-emerald-700 dark:text-emerald-300"
               />
 
               <h2 className="text-4xl md:text-5xl font-bold text-black dark:text-white mb-6">
@@ -739,11 +739,11 @@ export default function AboutPage() {
             <Reveal className="text-center mb-20">
               <SectionBadge
                 icon={TrendingUp}
-                text={translations[language].impact}
-                gradient="from-white/10 to-white/10"
-                borderClass="border-white/20"
-                iconClass="text-white"
-                textClass="text-white"
+                text="Our Impact"
+                gradient="from-purple-500/10 to-pink-500/10 dark:from-white/10 dark:to-white/10"
+                borderClass="border-purple-200/50 dark:border-white/20"
+                iconClass="text-purple-600 dark:text-white"
+                textClass="text-purple-700 dark:text-white"
               />
 
               <h2 className="text-4xl md:text-5xl font-bold text-black dark:text-white mb-6">
@@ -759,7 +759,7 @@ export default function AboutPage() {
               {STATS_DATA.map((stat, index) => (
                 <Reveal key={stat.label} delay={index * 0.08}>
                   <div className="group text-center">
-                    <div className="h-full bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/20 hover:border-accent/40 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl">
+                    <div className="h-full bg-white/50 dark:bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-purple-100 dark:border-white/20 hover:border-accent/40 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl shadow-sm dark:shadow-none">
                       <stat.icon className="w-12 h-12 text-accent mx-auto mb-6 group-hover:scale-110 transition-transform duration-500" />
                       <div className="text-4xl md:text-5xl font-bold text-black dark:text-white mb-3 group-hover:text-accent transition-colors duration-500">
                         {stat.number}
@@ -795,7 +795,7 @@ export default function AboutPage() {
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 items-stretch">
               {IMPACT_DATA.map((impact, index) => (
                 <Reveal key={impact.title} delay={index * 0.08}>
-                  <div className="bg-black rounded-3xl p-8 flex flex-col justify-center items-center text-center h-full min-h-65 border border-white/10">
+                  <div className="bg-white dark:bg-black rounded-3xl p-8 flex flex-col justify-center items-center text-center h-full min-h-[260px] border border-gray-200 dark:border-white/10 shadow-sm dark:shadow-none hover:border-accent/50 transition-all duration-700 hover:scale-[1.02] group">
                     <impact.icon className="w-12 h-12 text-accent mx-auto mb-6 group-hover:scale-110 transition-transform duration-500" />
                     <h3 className="text-xl font-semibold text-black dark:text-white mb-3 group-hover:text-accent transition-colors duration-500">
                       {impact.title}
@@ -813,7 +813,7 @@ export default function AboutPage() {
         {/* CTA Section */}
         <section id="get-started" className="py-20 px-4 sm:px-6 lg:px-8">
           <Reveal className="max-w-4xl mx-auto text-center">
-            <div className="bg-gradient-to-br dark:from-black/50 to-purple-900/30 rounded-3xl p-12 border border-accent/30 backdrop-blur-xl hover:border-accent/50 transition-all duration-700">
+            <div className="bg-gradient-to-br from-purple-50/50 to-purple-100/30 dark:from-black/50 dark:to-purple-900/30 rounded-3xl p-12 border border-purple-200/50 dark:border-accent/30 backdrop-blur-xl hover:border-accent/50 transition-all duration-700">
               <h2 className="text-3xl md:text-4xl font-bold text-black dark:text-white mb-6">
                 Ready to Transform Your Institution?
               </h2>
