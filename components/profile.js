@@ -16,7 +16,6 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { Navbar } from "./Navbar";
 import UniversalProfile from "@/components/universal-profile";
 
 export default function ProfilePage() {
@@ -168,7 +167,6 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-gray-900 to-slate-950 flex items-center justify-center">
-        <Navbar />
         <div className="text-center text-white pt-20">
           <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-400">Checking authentication...</p>
@@ -180,7 +178,6 @@ export default function ProfilePage() {
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-gray-900 to-slate-950 flex items-center justify-center">
-        <Navbar />
         <div className="text-center text-white pt-20">
           <div className="w-16 h-16 bg-gradient-to-r from-accent to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
             <User className="w-8 h-8" />
@@ -196,7 +193,6 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-gray-900 to-slate-950 pt-20">
-      <Navbar />
       <UniversalProfile />
     </div>
   );
